@@ -1,0 +1,77 @@
+# Governance: identity -> role -> statement -> decision.
+#
+# Default-deny. An explicit `deny` beats every `allow`.
+# Scope patterns match the scope itself or any ancestor, so
+# `program:payments/*` covers every application beneath that program.
+
+roles:
+  platform-admin:
+    description: Full control of the platform.
+    statements:
+      - effect: allow
+        actions: ["*"]
+        scopes: ["*"]
+        sources: ["*"]
+
+  knowledge-engineer:
+    description: May ingest and curate anywhere, but not publish or administer.
+    statements:
+      - effect: allow
+        actions: ["knowledge:ingest", "knowledge:curate", "knowledge:read"]
+        scopes: ["*"]
+        sources: ["*"]
+      - effect: deny
+        actions: ["knowledge:publish", "platform:admin"]
+        scopes: ["*"]
+
+  application-owner:
+    description: Owns one application; full lifecycle within it.
+    statements:
+      - effect: allow
+        actions: ["knowledge:*"]
+        scopes: ["application:abc", "application:abc/*"]
+        sources: ["*"]
+
+  jira-ingestor:
+    description: Service account that may pull Jira only.
+    statements:
+      - effect: allow
+        actions: ["knowledge:ingest"]
+        scopes: ["*"]
+        sources: ["jira"]
+
+  agent-reader:
+    description: Coding agents. May read published knowledge; may not write.
+    statements:
+      - effect: allow
+        actions: ["knowledge:read"]
+        scopes: ["*"]
+      - effect: deny
+        actions: ["knowledge:ingest", "knowledge:curate", "knowledge:publish"]
+        scopes: ["*"]
+
+principals:
+  - id: platform-admin
+    kind: user
+    display_name: Platform Administrator
+    roles: [platform-admin]
+
+  - id: gokulkrishnan1293@gmail.com
+    kind: user
+    display_name: Gokul Krishnan
+    roles: [platform-admin]
+
+  - id: svc-jira-sync
+    kind: service
+    display_name: Jira Sync Service
+    roles: [jira-ingestor]
+
+  - id: agent:cursor
+    kind: agent
+    display_name: Cursor
+    roles: [agent-reader]
+
+  - id: agent:claude-code
+    kind: agent
+    display_name: Claude Code
+    roles: [agent-reader]
