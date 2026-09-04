@@ -1,0 +1,22 @@
+servers:
+  fixture:
+    description: Deterministic fixture source
+    sources:
+      fixture: ["*"]
+      jira: ["jira_*"]
+      confluence: ["confluence_*"]
+    transport: stdio
+    command: ${KB_PYTHON:-python3}
+    args: ["-m", "tests.fake_mcp_server"]
+    tools:
+      allow: ["jira_*", "confluence_*"]
+      deny: ["*_create_*"]
+
+  needs_creds:
+    description: Server that is configured but not credentialed
+    sources: [github]
+    transport: streamable_http
+    url: https://example.invalid/mcp
+    requires_env: [KB_TEST_ABSENT_TOKEN]
+    headers:
+      Authorization: "Bearer ${KB_TEST_ABSENT_TOKEN}"

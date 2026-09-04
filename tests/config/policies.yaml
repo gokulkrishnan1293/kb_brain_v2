@@ -1,0 +1,38 @@
+roles:
+  admin:
+    statements:
+      - effect: allow
+        actions: ["*"]
+        scopes: ["*"]
+  jira-only:
+    statements:
+      - effect: allow
+        actions: ["knowledge:ingest", "knowledge:read"]
+        scopes: ["*"]
+        sources: ["jira", "fixture"]
+  payments-owner:
+    statements:
+      - effect: allow
+        actions: ["knowledge:*"]
+        scopes: ["program:payments/*"]
+  no-publish:
+    statements:
+      - effect: allow
+        actions: ["*"]
+        scopes: ["*"]
+      - effect: deny
+        actions: ["knowledge:publish"]
+        scopes: ["*"]
+
+principals:
+  - id: admin
+    roles: [admin]
+  - id: jira-bot
+    kind: service
+    roles: [jira-only]
+  - id: pay-owner
+    roles: [payments-owner]
+  - id: curator
+    roles: [no-publish]
+  - id: roleless
+    roles: []
