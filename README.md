@@ -152,6 +152,12 @@ interpreter that has this project installed:
 export KB_PYTHON="$PWD/.venv/bin/python"
 ```
 
+## Specification
+
+`docs/IMPLEMENTATION_SPEC.md` specifies what is built: contracts, data model,
+governance semantics, config schema, API surface, extension points, and
+traceability back to the concept spec's nine principles.
+
 ## Known gaps
 
 - **Identity is a shim.** `X-KB-Principal` is trusted as sent. Replace
